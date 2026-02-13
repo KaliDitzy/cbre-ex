@@ -412,6 +412,31 @@ namespace CBRE.Editor.Compiling
                 br.Write((float)customEntity.Origin.Z);
                 br.Write((float)customEntity.Origin.Y);
 
+                if (!is1_3_12) {
+                    if (customEntity.ClassName.ToLower() == "door") {
+                        br.Write(int.Parse(customEntity.EntityData.GetPropertyValue("type")));
+                        br.Write(int.Parse(customEntity.EntityData.GetPropertyValue("keycard")));
+                        br.WriteB3DString(customEntity.EntityData.GetPropertyValue("code"));
+                        br.Write(float.Parse(customEntity.EntityData.GetPropertyValue("angle")));
+                        br.Write(customEntity.EntityData.GetPropertyValue("open").ToBool());
+                        br.Write(customEntity.EntityData.GetPropertyValue("allowremotecontrol").ToBool());
+                        continue;
+                    } else if (customEntity.ClassName.ToLower() == "item") {
+                        var name = customEntity.EntityData.GetPropertyValue("name");
+                        br.WriteB3DString(name);
+                        br.WriteB3DString(name);
+                        br.Write(customEntity.EntityData.GetPropertyValue("use_custom_rotation").ToBool());
+                        var angles = customEntity.EntityData.GetPropertyCoordinate("angles");
+                        br.Write((float)angles.X);
+                        br.Write((float)angles.Y);
+                        br.Write((float)angles.Z);
+                        br.Write(float.Parse(customEntity.EntityData.GetPropertyValue("state")));
+                        br.Write(float.Parse(customEntity.EntityData.GetPropertyValue("state")));
+                        br.Write(float.Parse(customEntity.EntityData.GetPropertyValue("chance")));
+                        continue;
+                    }
+                }
+
                 IEnumerable<DataStructures.GameData.Property> customEntityProperties = customEntity.GameData.Properties.Where(x => x.Name != "position");
 
                 foreach (DataStructures.GameData.Property customEntityProperty in customEntityProperties)

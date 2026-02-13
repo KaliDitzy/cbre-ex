@@ -8,14 +8,7 @@
       "Type": "String",
       "SmartEditName": "Name",
       "DefaultValue": "",
-      "HelpText": "The name of the item as displayed in the inventory. If left empty this is derived from the template name, although some templates may represent multiple items. Certain game functionality is associated with the item name."
-    },
-    {
-      "Name": "template_name",
-      "Type": "String",
-      "SmartEditName": "Template Name",
-      "DefaultValue": "",
-      "HelpText": "The name of the item's template. This corresponds to the 'tempname' property found in the game's code."
+      "HelpText": "The name of the item, as it appears in items.ini."
     },
     {
       "Name": "use_custom_rotation",
