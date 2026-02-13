@@ -104,7 +104,8 @@ namespace CBRE.Editor.Compiling
 #if RM2
                 filter += "SCP-CB v1.4 RM2 (*.rm2)|*.rm2|";
 #endif
-                filter += "SCP-CB v1.3.11 RMesh (*.rmesh)|*.rmesh";
+                filter += "SCP-CB v1.3.12 RMesh (*.rm)|*.rm";
+                filter += "|SCP-CB v1.3.11 RMesh (*.rmesh)|*.rmesh";
                 filter += "|Autodesk Filmbox (*.fbx)|*.fbx";
                 filter += "|Wavefront Object (*.obj)|*.obj";
                 filter += "|Stereolithography (*.stl)|*.stl";
@@ -263,9 +264,9 @@ namespace CBRE.Editor.Compiling
                     {
                         RM2Export.SaveToFile(SaveFileName, Document, this);
                     }
-                    else if (extension.Equals(".rmesh", StringComparison.OrdinalIgnoreCase))
+                    else if (extension.Equals(".rmesh", StringComparison.OrdinalIgnoreCase) || extension.Equals(".rm", StringComparison.OrdinalIgnoreCase))
                     {
-                        RMeshExport.SaveToFile(SaveFileName, Document, this);
+                        RMeshExport.SaveToFile(SaveFileName, Document, this, extension.Equals(".rm", StringComparison.OrdinalIgnoreCase));
                         if (SteamClient.IsValid)
                         {
                             Achievement achExported = SteamUserStats.Achievements.FirstOrDefault(x => x.Identifier == "exported_rmesh");

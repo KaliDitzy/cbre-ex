@@ -38,12 +38,12 @@ namespace CBRE.Editor.Compiling
             LM = 2
         };
 
-        public static void SaveToFile(string filename, Document document, ExportForm form)
+        public static void SaveToFile(string filename, Document document, ExportForm form, bool is1_3_12)
         {
             Map map = document.Map;
             string filepath = System.IO.Path.GetDirectoryName(filename);
             filename = System.IO.Path.GetFileName(filename);
-            filename = System.IO.Path.GetFileNameWithoutExtension(filename) + ".rmesh";
+            filename = System.IO.Path.GetFileNameWithoutExtension(filename) + (is1_3_12 ? ".rm" : ".rmesh");
             string lmPath = System.IO.Path.GetFileNameWithoutExtension(filename) + "_lm";
 
             List<LMFace> faces; int lmCount;
@@ -62,6 +62,13 @@ namespace CBRE.Editor.Compiling
             });
 
             IEnumerable<Face> invisibleCollisionFaces = map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Where(x => x.Texture.Name.ToLowerInvariant() == "tooltextures/invisible_collision");
+
+            IEnumerable<Entity> triggerBoxes = map.WorldSpawn.Find(x => x.ClassName?.ToLower() == "triggerbox").OfType<Entity>().ToArray();
+            if (!triggerBoxes.Any() && map.WorldSpawn.Find(x => x is Solid).OfType<Solid>().SelectMany(x => x.Faces).Any(x =>
+                    x.Texture.Name.ToLowerInvariant() == "tooltextures/triggerbox")) {
+                throw new Exception(
+                    "The map contains trigger box faces, but no trigger box entities were found. Trigger boxes require an entity to function! Use \"Tie to Entity\" with your brush selected.");
+            }
 
             Lightmapper.SaveLightmaps(document, lmCount, filepath + "/" + lmPath, false);
             lmPath = System.IO.Path.GetFileName(lmPath);
@@ -82,7 +89,12 @@ namespace CBRE.Editor.Compiling
             BinaryWriter br = new BinaryWriter(stream);
 
             //header
-            br.WriteB3DString("RoomMesh");
+            if (is1_3_12) {
+                br.WriteB3DString("RM");
+                br.Write((byte)0); // version
+            } else {
+                br.WriteB3DString(triggerBoxes.Any() ? "RoomMesh.HasTriggerBox" : "RoomMesh");
+            }
 
             //textures
             List<Tuple<string, RMeshLoadFlags, RMeshBlendFlags, byte>> textures = new List<Tuple<string, RMeshLoadFlags, RMeshBlendFlags, byte>>();
@@ -231,6 +243,11 @@ namespace CBRE.Editor.Compiling
                 }
             }
 
+            if (is1_3_12) {
+                // Visible brushes without collision. TODO
+                br.Write((Int32)0);
+            }
+
             vertCount = 0;
             vertOffset = 0;
             triCount = 0;
@@ -269,6 +286,39 @@ namespace CBRE.Editor.Compiling
             else
             {
                 br.Write((Int32)0);
+            }
+
+            if (is1_3_12 || triggerBoxes.Any()) {
+                br.Write(triggerBoxes.Count());
+                foreach (var triggerBox in triggerBoxes) {
+                    br.Write(1); // Surfaces
+                    var trbFaces = triggerBox.GetChildren().OfType<Solid>().SelectMany(x => x.Faces).ToArray();
+
+                    foreach (Face face in trbFaces) {
+                        vertCount += face.Vertices.Count;
+                        triCount += face.GetTriangleIndices().Count() / 3;
+                    }
+
+                    vertOffset = 0;
+                    br.Write((Int32)vertCount);
+                    foreach (Face face in trbFaces) {
+                        for (int j = 0; j < face.Vertices.Count; j++) {
+                            br.Write((float)face.Vertices[j].Location.X);
+                            br.Write((float)face.Vertices[j].Location.Z);
+                            br.Write((float)face.Vertices[j].Location.Y);
+                        }
+                    }
+                    br.Write((Int32)triCount);
+                    foreach (Face face in trbFaces) {
+                        foreach (uint ind in face.GetTriangleIndices()) {
+                            br.Write((Int32)(ind + vertOffset));
+                        }
+
+                        vertOffset += face.Vertices.Count;
+                    }
+
+                    br.WriteB3DString(triggerBox.EntityData.GetPropertyValue("name"));
+                }
             }
 
             br.Write((lights.Count + waypoints.Count + soundEmitters.Count() + props.Count() + screens.Count()
