@@ -128,6 +128,7 @@ namespace CBRE.DataStructures.GameData
 
             GameDataObject soundEmitterDataObj = new GameDataObject("soundemitter", "Self-explanatory.", ClassType.Point);
             soundEmitterDataObj.Properties.Add(new Property("sound", VariableType.Integer) { ShortDescription = "Ambience index", DefaultValue = "1" });
+            soundEmitterDataObj.Properties.Add(new Property("range", VariableType.Float) { ShortDescription = "Range", DefaultValue = "1.0" });
             soundEmitterDataObj.Behaviours.Add(new Behaviour("sprite", "sprites/speaker"));
             Classes.Add(soundEmitterDataObj);
 
