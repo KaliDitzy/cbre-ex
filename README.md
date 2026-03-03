@@ -36,6 +36,7 @@ These are credits for people who have contributed greatly to the project.
 - **Saalvage** - Helped with CBRE development.
 - **Analog Feelings** - Created this CBRE fork.
 - **VirtualBrightPlayz** - Creator of another CBRE fork, he wrote the model baking code.
+- **C4** - Created the Steam cover art.
 
 # :balance_scale: License Information
 
