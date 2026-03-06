@@ -15,7 +15,7 @@ namespace CBRE.Providers.Map
 {
     public class CBRProvider : MapProvider
     {
-        private const uint revision = 0;
+        private const uint revision = 1;
 
         // Hierarchy control bytes
         // bytes to avoid enum cast
@@ -120,6 +120,9 @@ namespace CBRE.Providers.Map
                         {
                             v.LMU = reader.ReadSingle();
                             v.LMV = reader.ReadSingle();
+                        }
+                        if (lightmapped || revision > 0)
+                        {
                             v.TextureU = (decimal)reader.ReadSingle();
                             v.TextureV = (decimal)reader.ReadSingle();
                         }
@@ -193,7 +196,9 @@ namespace CBRE.Providers.Map
                                     propertyVal = reader.ReadNullTerminatedString();
                                     break;
                                 case VariableType.Vector:
-                                    propertyVal = DataStructures.MapObjects.Property.FromCoordinate(reader.ReadCoordinate());
+                                    var coord = new Coordinate(reader.ReadSingleAsDecimal(),
+                                        reader.ReadSingleAsDecimal(), reader.ReadSingleAsDecimal());
+                                    propertyVal = DataStructures.MapObjects.Property.FromCoordinate(coord);
                                     break;
                                 case VariableType.Choices:
                                     // TODO: Bullshit
@@ -379,6 +384,9 @@ namespace CBRE.Providers.Map
                         {
                             writer.Write(v.LMU);
                             writer.Write(v.LMV);
+                        }
+                        if (lightmapped || revision > 0)
+                        {
                             writer.Write((float)v.TextureU);
                             writer.Write((float)v.TextureV);
                         }
@@ -474,7 +482,10 @@ namespace CBRE.Providers.Map
                                 writer.WriteNullTerminatedString(property.Value);
                                 break;
                             case VariableType.Vector:
-                                writer.WriteCoordinate(property.GetCoordinate(Coordinate.Zero));
+                                var coord = property.GetCoordinate(Coordinate.Zero);
+                                writer.Write((float)coord.X);
+                                writer.Write((float)coord.Y);
+                                writer.Write((float)coord.Z);
                                 break;
                             case VariableType.Choices:
                                 bool found = false;
