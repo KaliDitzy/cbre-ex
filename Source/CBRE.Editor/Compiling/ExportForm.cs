@@ -13,6 +13,7 @@ using Microsoft.WindowsAPICodePack.Taskbar;
 using Steamworks;
 using Steamworks.Data;
 using Color = System.Drawing.Color;
+using CBRE.Editor.Compiling.Lightmap;
 
 namespace CBRE.Editor.Compiling
 {
