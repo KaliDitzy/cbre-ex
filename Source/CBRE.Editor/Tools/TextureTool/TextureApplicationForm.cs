@@ -1,6 +1,7 @@
 ﻿using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
+using CBRE.Editor.Brushes;
 using CBRE.Editor.Documents;
 using CBRE.Editor.UI;
 using CBRE.Providers.Texture;
@@ -563,6 +564,13 @@ namespace CBRE.Editor.Tools.TextureTool
         public bool ShouldTreatAsOne()
         {
             return TreatAsOneCheckbox.Checked;
+        }
+
+        private void markButton_Click(object sender, EventArgs e)
+        {
+            TextureItem textureToMark = GetFirstSelectedTexture();
+
+            throw new NotImplementedException("Tell Kali to get off her ass.");
         }
     }
 }
