@@ -10,8 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
-using Document = CBRE.Editor.Documents.Document;
 
 namespace CBRE.Editor.Tools.TextureTool
 {
