@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
+using Document = CBRE.Editor.Documents.Document;
 
 namespace CBRE.Editor.Tools.TextureTool
 {
@@ -568,9 +570,36 @@ namespace CBRE.Editor.Tools.TextureTool
 
         private void markButton_Click(object sender, EventArgs e)
         {
-            TextureItem textureToMark = GetFirstSelectedTexture();
+            IEnumerable<TextureItem> textureItems = GetSelectedTextures();
+            HashSet<String> textures = new HashSet<String>();
+            string Normalize(string tex) => tex?.Replace('\\', '/').ToLowerInvariant();
+            foreach (TextureItem textureItem in textureItems)
+            {
+                textures.Add(Normalize(textureItem.GetTexture()?.Name));
+            }
 
-            throw new NotImplementedException("Tell Kali to get off her ass.");
+            if (textures.Count == 0) return;
+
+            Document.Selection.Clear();
+            IEnumerable<MapObject> mapObjects = Document.Map.WorldSpawn.GetChildren();
+            foreach (MapObject mapObject in mapObjects)
+            {
+                if (!(mapObject is Solid)) continue;
+                Solid solid = (Solid)mapObject;
+                IEnumerable<Face> faces = solid.Faces;
+                foreach (Face face in faces)
+                {
+                    ITexture texture = face.Texture.Texture;
+                    if (textures.Contains(Normalize(texture.Name)))
+                    {
+                        Document.Selection.Select(face);
+                    }
+                }
+            }
+
+            Document.RenderSelection(Document.Selection.GetSelectedObjects());
+
+            //throw new NotImplementedException("Tell Kali to get off her ass.");
         }
     }
 }
