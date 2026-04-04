@@ -7,6 +7,7 @@ using CBRE.Providers.Texture;
 using CBRE.Settings;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -565,21 +566,11 @@ namespace CBRE.Editor.Tools.TextureTool
             return TreatAsOneCheckbox.Checked;
         }
 
-        private void markButton_Click(object sender, EventArgs e)
+        private string Normalize(string tex) => tex?.Replace('\\', '/').ToLowerInvariant();
+
+        private void RecursiveMark(IEnumerable<MapObject> objects, HashSet<string> textures)
         {
-            IEnumerable<TextureItem> textureItems = GetSelectedTextures();
-            HashSet<String> textures = new HashSet<String>();
-            string Normalize(string tex) => tex?.Replace('\\', '/').ToLowerInvariant();
-            foreach (TextureItem textureItem in textureItems)
-            {
-                textures.Add(Normalize(textureItem.GetTexture()?.Name));
-            }
-
-            if (textures.Count == 0) return;
-
-            Document.Selection.Clear();
-            IEnumerable<MapObject> mapObjects = Document.Map.WorldSpawn.GetChildren();
-            foreach (MapObject mapObject in mapObjects)
+            foreach (MapObject mapObject in objects)
             {
                 if (!(mapObject is Solid)) continue;
                 Solid solid = (Solid)mapObject;
@@ -592,7 +583,29 @@ namespace CBRE.Editor.Tools.TextureTool
                         Document.Selection.Select(face);
                     }
                 }
+
+                IEnumerable<MapObject> children = mapObject.GetChildren();
+                if (children.Any())
+                {
+                    RecursiveMark(children, textures);
+                }
             }
+        }
+
+        private void markButton_Click(object sender, EventArgs e)
+        {
+            IEnumerable<TextureItem> textureItems = GetSelectedTextures();
+            HashSet<String> textures = new HashSet<String>();
+            foreach (TextureItem textureItem in textureItems)
+            {
+                textures.Add(Normalize(textureItem.GetTexture()?.Name));
+            }
+
+            if (textures.Count == 0) return;
+
+            Document.Selection.Clear();
+            IEnumerable<MapObject> mapObjects = Document.Map.WorldSpawn.GetChildren();
+            RecursiveMark(mapObjects, textures);
 
             Document.RenderSelection(Document.Selection.GetSelectedObjects());
 
