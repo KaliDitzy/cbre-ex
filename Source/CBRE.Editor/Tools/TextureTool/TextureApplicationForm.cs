@@ -5,6 +5,7 @@ using CBRE.Editor.Documents;
 using CBRE.Editor.UI;
 using CBRE.Providers.Texture;
 using CBRE.Settings;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -568,30 +569,6 @@ namespace CBRE.Editor.Tools.TextureTool
 
         private string Normalize(string tex) => tex?.Replace('\\', '/').ToLowerInvariant();
 
-        private void RecursiveMark(IEnumerable<MapObject> objects, HashSet<string> textures)
-        {
-            foreach (MapObject mapObject in objects)
-            {
-                if (!(mapObject is Solid)) continue;
-                Solid solid = (Solid)mapObject;
-                IEnumerable<Face> faces = solid.Faces;
-                foreach (Face face in faces)
-                {
-                    ITexture texture = face.Texture.Texture;
-                    if (textures.Contains(Normalize(texture.Name)))
-                    {
-                        Document.Selection.Select(face);
-                    }
-                }
-
-                IEnumerable<MapObject> children = mapObject.GetChildren();
-                if (children.Any())
-                {
-                    RecursiveMark(children, textures);
-                }
-            }
-        }
-
         private void markButton_Click(object sender, EventArgs e)
         {
             IEnumerable<TextureItem> textureItems = GetSelectedTextures();
@@ -604,8 +581,18 @@ namespace CBRE.Editor.Tools.TextureTool
             if (textures.Count == 0) return;
 
             Document.Selection.Clear();
-            IEnumerable<MapObject> mapObjects = Document.Map.WorldSpawn.GetChildren();
-            RecursiveMark(mapObjects, textures);
+            foreach (Solid solid in Document.Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
+            {
+                IEnumerable<Face> faces = solid.Faces;
+                foreach (Face face in faces)
+                {
+                    ITexture texture = face.Texture.Texture;
+                    if (textures.Contains(Normalize(texture.Name)))
+                    {
+                        Document.Selection.Select(face);
+                    }
+                }
+            }
 
             Document.RenderSelection(Document.Selection.GetSelectedObjects());
 
