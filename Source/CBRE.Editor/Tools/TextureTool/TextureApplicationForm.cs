@@ -596,7 +596,7 @@ namespace CBRE.Editor.Tools.TextureTool
 
             Document.RenderSelection(Document.Selection.GetSelectedObjects());
 
-            MessageBox.Show("All faces with the same texture have been selected.", "Faces Marked");
+            MessageBox.Show("All faces with the same textures have been selected.", "Faces Marked");
         }
     }
 }
