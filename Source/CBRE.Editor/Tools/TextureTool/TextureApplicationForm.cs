@@ -1,7 +1,6 @@
 ﻿using CBRE.Common;
 using CBRE.Common.Mediator;
 using CBRE.DataStructures.MapObjects;
-using CBRE.Editor.Brushes;
 using CBRE.Editor.Documents;
 using CBRE.Editor.UI;
 using CBRE.Providers.Texture;
