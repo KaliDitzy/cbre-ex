@@ -596,7 +596,7 @@ namespace CBRE.Editor.Tools.TextureTool
 
             Document.RenderSelection(Document.Selection.GetSelectedObjects());
 
-            //throw new NotImplementedException("Tell Kali to get off her ass.");
+            MessageBox.Show("All faces with the same texture have been selected.", "Faces Marked");
         }
     }
 }
