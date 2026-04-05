@@ -245,6 +245,9 @@ namespace CBRE.Editor.Compiling
                 modelBakeYes.Enabled = !enabled;
                 modelBakeNo.Enabled = !enabled;
 
+                advancedLightingYes.Enabled = !enabled;
+                advancedLightingNo.Enabled = !enabled;
+
                 render.Enabled = !enabled;
                 export.Enabled = !enabled;
                 cancel.Enabled = enabled;
@@ -388,6 +391,20 @@ namespace CBRE.Editor.Compiling
             {
                 modelBakeYes.Checked = true;
             }
+            if (LightmapConfig.RenderAdvancedLighting)
+            {
+                advancedLightingYes.Checked = true;
+            }
+        }
+
+        private void advancedLightingYes_CheckedChanged(object sender, EventArgs e)
+        {
+            LightmapConfig.RenderAdvancedLighting = advancedLightingYes.Checked;
+        }
+
+        private void advancedLightingHelp_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("If 'Yes' is selected, then soft lights will be rendered into the lightmap, if not, then soft lights will not be computed.", "Advanced Lighting Help", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }
