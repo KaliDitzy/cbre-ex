@@ -1,4 +1,5 @@
 ﻿using CBRE.DataStructures.GameData;
+using CBRE.DataStructures.Geometric;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Documents;
 using CBRE.Editor.Extensions;
@@ -65,6 +66,9 @@ namespace CBRE.Editor.Rendering.Helpers
             Property rKey = entity.EntityData.Properties.FirstOrDefault(p => p.Key == "radius");
             float.TryParse(rKey?.Value, out float r);
 
+            Property colorKey = entity.EntityData.Properties.FirstOrDefault(p => p.Key == "color");
+            string colorString = colorKey?.Value;
+
             Common.ITexture tex = Document.GetTexture(entity.GetSprite());
             if (tex == null) TextureHelper.Unbind();
             else tex.Bind();
@@ -101,20 +105,59 @@ namespace CBRE.Editor.Rendering.Helpers
 
             if (r > 0f)
             {
-                tex = Document.GetTexture("sprites/helpers/radius");
-                if (tex == null) TextureHelper.Unbind();
-                else tex.Bind();
+                int numPoints = 32;
+                int latitudeLines = 8;
+                float increment = (float)(2 * Math.PI / numPoints);
 
-                tup = Vector3.Multiply(up, r);
-                tright = Vector3.Multiply(right, r);
+                Color entityColor = Color.White;
+                if (!string.IsNullOrEmpty(colorString))
+                {
+                    string[] parts = colorString.Split(' ');
 
-                GL.Begin(PrimitiveType.Quads);
+                    entityColor = Color.FromArgb(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]));
+                }
 
-                GL.Normal3(normal); GL.TexCoord2(0, 1); GL.Vertex3(Vector3.Subtract(orig, Vector3.Add(tup, tright)));
-                GL.Normal3(normal); GL.TexCoord2(0, 0); GL.Vertex3(Vector3.Add(orig, Vector3.Subtract(tup, tright)));
-                GL.Normal3(normal); GL.TexCoord2(1, 0); GL.Vertex3(Vector3.Add(orig, Vector3.Add(tup, tright)));
-                GL.Normal3(normal); GL.TexCoord2(1, 1); GL.Vertex3(Vector3.Subtract(orig, Vector3.Subtract(tup, tright)));
-
+                TextureHelper.Unbind();
+                GL.Begin(PrimitiveType.Lines);
+                // X/Y Plane
+                for (int i = 0; i < numPoints; i++)
+                {
+                    float firstAngle = i * increment;
+                    float secondAngle = (i + 1) * increment;
+                    float firstX = (float)(orig.X + r * Math.Cos(firstAngle));
+                    float firstY = (float)(orig.Y + r * Math.Sin(firstAngle));
+                    float secondX = (float)(orig.X + r * Math.Cos(secondAngle));
+                    float secondY = (float)(orig.Y + r * Math.Sin(secondAngle));
+                    GL.Color3(Color.FromArgb(128, entityColor));
+                    GL.Vertex3(firstX, firstY, orig.Z);
+                    GL.Vertex3(secondX, secondY, orig.Z);
+                }
+                // Y/Z Plane
+                for (int i = 0; i < numPoints; i++)
+                {
+                    float firstAngle = i * increment;
+                    float secondAngle = (i + 1) * increment;
+                    float firstY = (float)(orig.Y + r * Math.Cos(firstAngle));
+                    float firstZ = (float)(orig.Z + r * Math.Sin(firstAngle));
+                    float secondY = (float)(orig.Y + r * Math.Cos(secondAngle));
+                    float secondZ = (float)(orig.Z + r * Math.Sin(secondAngle));
+                    GL.Color3(Color.FromArgb(128, entityColor));
+                    GL.Vertex3(orig.X, firstY, firstZ);
+                    GL.Vertex3(orig.X, secondY, secondZ);
+                }
+                // Z/X Plane
+                for (int i = 0; i < numPoints; i++)
+                {
+                    float firstAngle = i * increment;
+                    float secondAngle = (i + 1) * increment;
+                    float firstZ = (float)(orig.Z + r * Math.Cos(firstAngle));
+                    float firstX = (float)(orig.X + r * Math.Sin(firstAngle));
+                    float secondZ = (float)(orig.Z + r * Math.Cos(secondAngle));
+                    float secondX = (float)(orig.X + r * Math.Sin(secondAngle));
+                    GL.Color3(Color.FromArgb(128, entityColor));
+                    GL.Vertex3(firstX, orig.Y, firstZ);
+                    GL.Vertex3(secondX, orig.Y, secondZ);
+                }
                 GL.End();
             }
         }
