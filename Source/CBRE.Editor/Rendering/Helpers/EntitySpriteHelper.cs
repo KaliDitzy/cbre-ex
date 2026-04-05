@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Property = CBRE.DataStructures.MapObjects.Property;
 
 namespace CBRE.Editor.Rendering.Helpers
 {
@@ -61,9 +62,13 @@ namespace CBRE.Editor.Rendering.Helpers
             }
             Vector3 normal = Vector3.Subtract(vp.Camera.Location, orig);
 
+            Property rKey = entity.EntityData.Properties.FirstOrDefault(p => p.Key == "radius");
+            float.TryParse(rKey?.Value, out float r);
+
             Common.ITexture tex = Document.GetTexture(entity.GetSprite());
             if (tex == null) TextureHelper.Unbind();
             else tex.Bind();
+            Console.WriteLine(entity.GetSprite());
 
             GL.Color3(Color.White);
 
@@ -93,6 +98,25 @@ namespace CBRE.Editor.Rendering.Helpers
             GL.Normal3(normal); GL.TexCoord2(1, 1); GL.Vertex3(Vector3.Subtract(orig, Vector3.Subtract(tup, tright)));
 
             GL.End();
+
+            if (r > 0f)
+            {
+                tex = Document.GetTexture("sprites/helper/radius");
+                if (tex == null) TextureHelper.Unbind();
+                else tex.Bind();
+
+                tup = Vector3.Multiply(up, r);
+                tright = Vector3.Multiply(right, r);
+
+                GL.Begin(PrimitiveType.Quads);
+
+                GL.Normal3(normal); GL.TexCoord2(0, 1); GL.Vertex3(Vector3.Subtract(orig, Vector3.Add(tup, tright)));
+                GL.Normal3(normal); GL.TexCoord2(0, 0); GL.Vertex3(Vector3.Add(orig, Vector3.Subtract(tup, tright)));
+                GL.Normal3(normal); GL.TexCoord2(1, 0); GL.Vertex3(Vector3.Add(orig, Vector3.Add(tup, tright)));
+                GL.Normal3(normal); GL.TexCoord2(1, 1); GL.Vertex3(Vector3.Subtract(orig, Vector3.Subtract(tup, tright)));
+
+                GL.End();
+            }
         }
 
         public void AfterRender3D(Viewport3D viewport)
