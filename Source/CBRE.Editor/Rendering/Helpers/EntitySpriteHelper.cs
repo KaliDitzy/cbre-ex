@@ -101,7 +101,7 @@ namespace CBRE.Editor.Rendering.Helpers
 
             if (r > 0f)
             {
-                tex = Document.GetTexture("sprites/helper/radius");
+                tex = Document.GetTexture("sprites/helpers/radius");
                 if (tex == null) TextureHelper.Unbind();
                 else tex.Bind();
 
