@@ -1,4 +1,5 @@
-﻿using CBRE.Common.Mediator;
+﻿using Assimp;
+using CBRE.Common.Mediator;
 using CBRE.DataStructures.GameData;
 using CBRE.DataStructures.MapObjects;
 using CBRE.Editor.Actions;
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Face = CBRE.DataStructures.MapObjects.Face;
 
 namespace CBRE.Editor.UI.ObjectProperties
 {
@@ -180,6 +182,25 @@ namespace CBRE.Editor.UI.ObjectProperties
                                                                                           // No change if indeterminate
                     }
                     if (entityData.Flags != beforeFlags) changed = true;
+                }
+
+                // Change texture of triggerboxes
+                if (entity.ClassName == "triggerbox")
+                {
+                    IEnumerable<Solid> solids = entity.GetChildren().OfType<Solid>();
+                    if (solids.Any())
+                    {
+                        foreach (Solid sol in solids)
+                        {
+                            foreach (Face face in sol.Faces)
+                            {
+                                var tex = face.Texture.Clone();
+                                tex.Name = "tooltextures/triggerbox";
+
+                                // TODO: triggerbox texture
+                            }
+                        }
+                    }
                 }
 
                 if (changed) action.AddEntity(entity, entityData);
