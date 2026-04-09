@@ -106,7 +106,8 @@ namespace CBRE.Editor.Compiling
                 filter += "SCP-CB v1.4 RM2 (*.rm2)|*.rm2|";
 #endif
                 filter += "SCP-CB v1.3.12 RMesh (*.rmesh)|*.rmesh";
-                filter += "|SCP-CB v1.3.11 RMesh (*.rmesh)|*.rmesh";
+                // When restoring v1.3.11 export, correctly set Is1312RMesh below as well via `save.FilterIndex == 1`.
+                //filter += "|SCP-CB v1.3.11 RMesh (*.rmesh)|*.rmesh";
                 filter += "|Autodesk Filmbox (*.fbx)|*.fbx";
                 filter += "|Wavefront Object (*.obj)|*.obj";
                 filter += "|Stereolithography (*.stl)|*.stl";
@@ -115,7 +116,7 @@ namespace CBRE.Editor.Compiling
                 if (save.ShowDialog() == DialogResult.OK)
                 {
                     SaveFileName = save.FileName;
-                    Is1312Rmesh = save.FilterIndex == 1;
+                    Is1312Rmesh = true;
 
                     ProgressLog.Text = "Exporting to " + save.FileName;
                     ProgressBar.Enabled = true;
