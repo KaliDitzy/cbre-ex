@@ -248,12 +248,13 @@ namespace CBRE.Editor.Compiling
                 br.Write((Int32)0);
             }
 
-            vertCount = 0;
-            vertOffset = 0;
-            triCount = 0;
             if (invisibleCollisionFaces.Count() > 0)
             {
                 br.Write((Int32)1);
+
+                vertCount = 0;
+                vertOffset = 0;
+                triCount = 0;
 
                 foreach (Face face in invisibleCollisionFaces)
                 {
@@ -294,12 +295,15 @@ namespace CBRE.Editor.Compiling
                     br.Write(1); // Surfaces
                     var trbFaces = triggerBox.GetChildren().OfType<Solid>().SelectMany(x => x.Faces).ToArray();
 
+                    vertCount = 0;
+                    vertOffset = 0;
+                    triCount = 0;
+
                     foreach (Face face in trbFaces) {
                         vertCount += face.Vertices.Count;
                         triCount += face.GetTriangleIndices().Count() / 3;
                     }
 
-                    vertOffset = 0;
                     br.Write((Int32)vertCount);
                     foreach (Face face in trbFaces) {
                         for (int j = 0; j < face.Vertices.Count; j++) {
