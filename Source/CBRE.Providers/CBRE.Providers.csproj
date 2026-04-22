@@ -12,9 +12,6 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AssimpNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AssimpNet.4.1.0\lib\net40\AssimpNet.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -27,5 +24,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Map\RMF22.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AssimpNetter" Version="6.0.4" />
   </ItemGroup>
 </Project>
