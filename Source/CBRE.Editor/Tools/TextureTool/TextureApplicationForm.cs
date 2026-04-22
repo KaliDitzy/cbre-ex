@@ -568,7 +568,7 @@ namespace CBRE.Editor.Tools.TextureTool
         private void MarkButtonClicked(object sender, EventArgs e)
         {
             var textures = GetSelectedTextures()
-                .Select(x => Normalize(x.GetTexture()?.Name))
+                .Select(x => x.GetTexture())
                 .ToHashSet();
 
             if (textures.Count == 0) return;
@@ -576,14 +576,12 @@ namespace CBRE.Editor.Tools.TextureTool
             Document.Selection.Clear();
             foreach (var face in Document.Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>()
                          .SelectMany(x => x.Faces)
-                         .Where(x => textures.Contains(Normalize(x.Texture.Texture.Name))))
+                         .Where(x => textures.Contains(x.Texture.Texture)))
             {
                 Document.Selection.Select(face);
             }
 
             Document.RenderFaces(Document.Selection.GetSelectedFaces());
-
-            static string Normalize(string tex) => tex?.Replace('\\', '/').ToLowerInvariant();
         }
     }
 }
