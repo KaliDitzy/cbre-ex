@@ -5,10 +5,8 @@ using CBRE.Editor.Documents;
 using CBRE.Editor.UI;
 using CBRE.Providers.Texture;
 using CBRE.Settings;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -567,36 +565,25 @@ namespace CBRE.Editor.Tools.TextureTool
             return TreatAsOneCheckbox.Checked;
         }
 
-        private string Normalize(string tex) => tex?.Replace('\\', '/').ToLowerInvariant();
-
-        private void markButton_Click(object sender, EventArgs e)
+        private void MarkButtonClicked(object sender, EventArgs e)
         {
-            IEnumerable<TextureItem> textureItems = GetSelectedTextures();
-            HashSet<String> textures = new HashSet<String>();
-            foreach (TextureItem textureItem in textureItems)
-            {
-                textures.Add(Normalize(textureItem.GetTexture()?.Name));
-            }
+            var textures = GetSelectedTextures()
+                .Select(x => Normalize(x.GetTexture()?.Name))
+                .ToHashSet();
 
             if (textures.Count == 0) return;
 
             Document.Selection.Clear();
-            foreach (Solid solid in Document.Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>())
+            foreach (var face in Document.Map.WorldSpawn.Find(x => x is Solid).OfType<Solid>()
+                         .SelectMany(x => x.Faces)
+                         .Where(x => textures.Contains(Normalize(x.Texture.Texture.Name))))
             {
-                IEnumerable<Face> faces = solid.Faces;
-                foreach (Face face in faces)
-                {
-                    ITexture texture = face.Texture.Texture;
-                    if (textures.Contains(Normalize(texture.Name)))
-                    {
-                        Document.Selection.Select(face);
-                    }
-                }
+                Document.Selection.Select(face);
             }
 
-            Document.RenderSelection(Document.Selection.GetSelectedObjects());
+            Document.RenderFaces(Document.Selection.GetSelectedFaces());
 
-            MessageBox.Show("All faces with the same textures have been selected.", "Faces Marked");
+            static string Normalize(string tex) => tex?.Replace('\\', '/').ToLowerInvariant();
         }
     }
 }

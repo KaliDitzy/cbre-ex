@@ -70,7 +70,7 @@ namespace CBRE.Editor.Tools.TextureTool
             this.HoverTip = new System.Windows.Forms.ToolTip(this.components);
             this.RecentTexturesList = new CBRE.Editor.UI.TextureListPanel();
             this.SelectedTexturesList = new CBRE.Editor.UI.TextureListPanel();
-            this.markButton = new System.Windows.Forms.Button();
+            this.MarkButton = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RotationValue)).BeginInit();
@@ -400,7 +400,7 @@ namespace CBRE.Editor.Tools.TextureTool
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 227F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 228F));
             this.tableLayoutPanel1.Controls.Add(this.label1, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 2);
@@ -613,24 +613,24 @@ namespace CBRE.Editor.Tools.TextureTool
             this.SelectedTexturesList.TabIndex = 37;
             this.SelectedTexturesList.TextureSelected += new CBRE.Editor.UI.TextureListPanel.TextureSelectedEventHandler(this.TexturesListTextureSelected);
             // 
-            // markButton
+            // MarkButton
             // 
-            this.markButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.markButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.markButton.Location = new System.Drawing.Point(174, 69);
-            this.markButton.Name = "markButton";
-            this.markButton.Size = new System.Drawing.Size(59, 23);
-            this.markButton.TabIndex = 39;
-            this.markButton.Text = "Mark";
-            this.markButton.UseVisualStyleBackColor = true;
-            this.markButton.Click += new System.EventHandler(this.markButton_Click);
+            this.MarkButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.MarkButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MarkButton.Location = new System.Drawing.Point(174, 69);
+            this.MarkButton.Name = "MarkButton";
+            this.MarkButton.Size = new System.Drawing.Size(59, 23);
+            this.MarkButton.TabIndex = 39;
+            this.MarkButton.Text = "Mark";
+            this.MarkButton.UseVisualStyleBackColor = true;
+            this.MarkButton.Click += new System.EventHandler(this.MarkButtonClicked);
             // 
             // TextureApplicationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(417, 420);
-            this.Controls.Add(this.markButton);
+            this.Controls.Add(this.MarkButton);
             this.Controls.Add(this.HideMaskCheckbox);
             this.Controls.Add(this.RecentTexturesList);
             this.Controls.Add(this.SelectedTexturesList);
@@ -716,6 +716,6 @@ namespace CBRE.Editor.Tools.TextureTool
         private System.Windows.Forms.ToolTip HoverTip;
         private System.Windows.Forms.CheckBox AlignToFaceCheckbox;
         private System.Windows.Forms.CheckBox AlignToWorldCheckbox;
-        private Button markButton;
+        private System.Windows.Forms.Button MarkButton;
     }
 }

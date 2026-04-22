@@ -10,7 +10,7 @@
     
     <TargetFramework>net48</TargetFramework>
     <Platforms>AnyCPU</Platforms>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>latest</LangVersion>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -579,22 +579,6 @@
     <ProjectReference Include="..\CBRE.SMFConverter\CBRE.SMFConverter.csproj" />
     <ProjectReference Include="..\CBRE.UI\CBRE.UI.csproj" />
   </ItemGroup>
-  <Choose>
-    <When Condition="'$(Platform)' == 'x86'">
-      <ItemGroup>
-        <PackageReference Include="Facepunch.Steamworks.Dll" Version="1.48.0" />
-        <PackageReference Include="Facepunch.Steamworks.win32" Version="2.3.3" />
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition="'$(Platform)' == 'x64'">
-      <ItemGroup>
-        <PackageReference Include="Facepunch.Steamworks" Version="2.3.3" />
-        <PackageReference Include="Facepunch.Steamworks.Library" Version="2.3.3" />
-      </ItemGroup>
-    </When>
-  </Choose>
   <ItemGroup>
 	<PackageReference Include="Facepunch.Steamworks.Dll" Version="1.48.0" />
     <PackageReference Include="Facepunch.Steamworks.win32" Version="2.3.3" />
