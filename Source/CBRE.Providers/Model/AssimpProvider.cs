@@ -250,7 +250,9 @@ namespace CBRE.Providers.Model
 
             rootNode.Children.Add(newNode);
 
-            new AssimpContext().ExportFile(scene, filename, format);
+            using var ctx = new AssimpContext();
+            if (!ctx.ExportFile(scene, filename, format))
+                throw new($"Failed to export map to {format}!");
         }
     }
 }

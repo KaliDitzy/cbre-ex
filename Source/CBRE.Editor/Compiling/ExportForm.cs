@@ -22,7 +22,6 @@ namespace CBRE.Editor.Compiling
         
         private readonly List<string> _GenericExtensions = new List<string>()
         {
-            ".fbx",
             ".obj",
             ".dae",
             ".stl",
@@ -107,7 +106,6 @@ namespace CBRE.Editor.Compiling
 #endif
                 filter += "SCP-CB v1.3.12 RMesh (*.rmesh)|*.rmesh";
                 filter += "|SCP-CB v1.3.11 RMesh (*.rmesh)|*.rmesh";
-                filter += "|Autodesk Filmbox (*.fbx)|*.fbx";
                 filter += "|Wavefront Object (*.obj)|*.obj";
                 filter += "|Stereolithography (*.stl)|*.stl";
                 filter += "|Stanford Polygon Library (*.ply)|*.ply";
