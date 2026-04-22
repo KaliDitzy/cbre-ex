@@ -6,6 +6,7 @@ using CBRE.Editor.Documents;
 using CBRE.Settings;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -43,7 +44,7 @@ namespace CBRE.Editor.Compiling
             Map map = document.Map;
             string filepath = System.IO.Path.GetDirectoryName(filename);
             filename = System.IO.Path.GetFileName(filename);
-            filename = System.IO.Path.GetFileNameWithoutExtension(filename) + (is1_3_12 ? ".rm" : ".rmesh");
+            filename = System.IO.Path.GetFileNameWithoutExtension(filename) + ".rmesh";
             string lmPath = System.IO.Path.GetFileNameWithoutExtension(filename) + "_lm";
 
             List<LMFace> faces; int lmCount;
@@ -248,12 +249,13 @@ namespace CBRE.Editor.Compiling
                 br.Write((Int32)0);
             }
 
-            vertCount = 0;
-            vertOffset = 0;
-            triCount = 0;
             if (invisibleCollisionFaces.Count() > 0)
             {
                 br.Write((Int32)1);
+
+                vertCount = 0;
+                vertOffset = 0;
+                triCount = 0;
 
                 foreach (Face face in invisibleCollisionFaces)
                 {
@@ -294,12 +296,15 @@ namespace CBRE.Editor.Compiling
                     br.Write(1); // Surfaces
                     var trbFaces = triggerBox.GetChildren().OfType<Solid>().SelectMany(x => x.Faces).ToArray();
 
+                    vertCount = 0;
+                    vertOffset = 0;
+                    triCount = 0;
+
                     foreach (Face face in trbFaces) {
                         vertCount += face.Vertices.Count;
                         triCount += face.GetTriangleIndices().Count() / 3;
                     }
 
-                    vertOffset = 0;
                     br.Write((Int32)vertCount);
                     foreach (Face face in trbFaces) {
                         for (int j = 0; j < face.Vertices.Count; j++) {
@@ -403,6 +408,19 @@ namespace CBRE.Editor.Compiling
                 br.WriteB3DString(screen.EntityData.GetPropertyValue("imgpath"));
             }
 
+            if (!is1_3_12 && customEntities.Any())
+            {
+                form.ProgressLog.Invoke((MethodInvoker)(() =>
+                {
+                    form.ProgressLog.SelectionColor = Color.Goldenrod;
+                    form.ProgressLog.AppendText(
+                        "\nWarning: This map contains entities that are not supported in CB v1.3.11. " +
+                        "Unless you are using a modded version, this map will not work. " +
+                        "It will also not be forward-compatible with v1.3.12.");
+                    form.ProgressLog.SelectionColor = form.ProgressLog.ForeColor;
+                }));
+            }
+
             foreach (Entity customEntity in customEntities)
             {
                 br.WriteB3DString(customEntity.ClassName);
@@ -411,31 +429,6 @@ namespace CBRE.Editor.Compiling
                 br.Write((float)customEntity.Origin.X);
                 br.Write((float)customEntity.Origin.Z);
                 br.Write((float)customEntity.Origin.Y);
-
-                if (!is1_3_12) {
-                    if (customEntity.ClassName.ToLower() == "door") {
-                        br.Write(int.Parse(customEntity.EntityData.GetPropertyValue("type")));
-                        br.Write(int.Parse(customEntity.EntityData.GetPropertyValue("keycard")));
-                        br.WriteB3DString(customEntity.EntityData.GetPropertyValue("code"));
-                        br.Write(float.Parse(customEntity.EntityData.GetPropertyValue("angle")));
-                        br.Write(customEntity.EntityData.GetPropertyValue("open").ToBool());
-                        br.Write(customEntity.EntityData.GetPropertyValue("allowremotecontrol").ToBool());
-                        continue;
-                    } else if (customEntity.ClassName.ToLower() == "item") {
-                        var name = customEntity.EntityData.GetPropertyValue("name");
-                        br.WriteB3DString(name);
-                        br.WriteB3DString(name);
-                        br.Write(customEntity.EntityData.GetPropertyValue("use_custom_rotation").ToBool());
-                        var angles = customEntity.EntityData.GetPropertyCoordinate("angles");
-                        br.Write((float)angles.X);
-                        br.Write((float)angles.Y);
-                        br.Write((float)angles.Z);
-                        br.Write(float.Parse(customEntity.EntityData.GetPropertyValue("state")));
-                        br.Write(float.Parse(customEntity.EntityData.GetPropertyValue("state")));
-                        br.Write(float.Parse(customEntity.EntityData.GetPropertyValue("chance")));
-                        continue;
-                    }
-                }
 
                 IEnumerable<DataStructures.GameData.Property> customEntityProperties = customEntity.GameData.Properties.Where(x => x.Name != "position");
 

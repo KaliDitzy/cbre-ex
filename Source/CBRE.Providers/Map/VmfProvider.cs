@@ -323,8 +323,8 @@ namespace CBRE.Providers.Map
             {
                 ClassName = entity["classname"],
                 EntityData = ReadEntityData(entity),
-                Origin = entity.PropertyCoordinate("origin")
             };
+            if (!(entity.GetChildren("solid").Any())) { ret.Origin = entity.PropertyCoordinate("origin"); }
             GenericStructure editor = entity.GetChildren("editor").FirstOrDefault() ?? new GenericStructure("editor");
             ret.Colour = editor.PropertyColour("color", Colour.GetRandomBrushColour());
             ret.Visgroups.AddRange(editor.GetAllPropertyValues("visgroupid").Select(int.Parse).Where(x => x > 0));

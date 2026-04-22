@@ -8,7 +8,7 @@
       "Type": "String",
       "SmartEditName": "Name",
       "DefaultValue": "",
-      "HelpText": "The name of the item, as it appears in items.ini."
+      "HelpText": "The name of the item, as it appears in items.ini, e.g. 'key1'. This must NOT be the display name of the item, as this would make the room fail to load in different locales."
     },
     {
       "Name": "use_custom_rotation",
